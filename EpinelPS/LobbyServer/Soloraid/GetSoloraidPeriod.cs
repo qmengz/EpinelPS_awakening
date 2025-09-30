@@ -13,7 +13,11 @@ namespace EpinelPS.LobbyServer.SoloraId
             {
                 Period = new NetSoloRaidPeriodData
                 {
-
+                    VisibleDate = DateTime.Now.AddDays(-10).Ticks,
+                    StartDate = DateTime.Now.AddDays(-5).Ticks,
+                    EndDate = DateTime.Now.AddDays(5).Ticks,
+                    DisableDate = DateTime.Now.AddDays(10).Ticks,
+                    SettleDate = DateTime.Now.AddDays(15).Ticks,
                 }
             };
             // TODO

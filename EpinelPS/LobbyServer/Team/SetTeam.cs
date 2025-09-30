@@ -16,7 +16,7 @@ namespace EpinelPS.LobbyServer.Team
             {
                 Type = req.Type
             };
-            response.Teams.AddRange(req.Teams.ToArray());
+            response.Teams.AddRange([.. req.Teams]);
 
             // Add team data to user data
             NetUserTeamData teamData = new() { LastContentsTeamNumber = req.ContentsId + 1, Type = req.Type };

@@ -119,6 +119,18 @@ public class User
     public Dictionary<long, AwakeningOption> EquipmentAwakeningOptions = [];
     public ResetAwakeningOption ResetAwakeningOption = new();
 
+    // Intercept anomalous data
+    public Dictionary<int, ReqEnterInterceptAnomalous> EnterInterceptAnomalous = [];
+    public Dictionary<int, ReqFinishInterceptAnomalous> FinishInterceptAnomalous = [];
+
+    // Intercept data
+    public Dictionary<int, ReqEnterIntercept> EnterIntercepts = [];
+    public Dictionary<int, ReqClearIntercept> ClearIntercepts = [];
+
+    // solo raid data
+    public Dictionary<long, SoloRaidInfo> SoloRaidData = [];
+
+
     public TriggerModel AddTrigger(Trigger type, int value, int conditionId = 0)
     {
         TriggerModel t = new()
@@ -415,4 +427,25 @@ public class User
         ResetableData = new();
         JsonDb.Save();
     }
+
+    public int GetCorporationId(RewardType type) => type switch
+    {
+        RewardType.Equipment_None => 0,
+        RewardType.Equipment_ELYSION => 1,
+        RewardType.Equipment_MISSILIS => 2,
+        RewardType.Equipment_TETRA => 3,
+        RewardType.Equipment_PILGRIM => 4,
+        RewardType.Equipment_ABNORMAL => 7,
+        RewardType.Equipment_Random_03 => GetCorporationId(),
+        _ => 0,
+    };
+
+    public int GetCorporationId()
+    {
+        List<int> crops = [1, 2, 3, 4, 7];
+        var random = new Random();
+        int index = random.Next(crops.Count); // 随机生成索引
+        return crops[index];
+    }
+
 }

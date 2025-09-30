@@ -260,6 +260,32 @@ namespace EpinelPS.Data
         [LoadRecord("ProfileCardObjectTable.json", "Id")]
         public readonly Dictionary<int, ProfileCardObjectRecord> ProfileCardObjectTable = [];
 
+        [LoadRecord("OutpostConditionTriggerTable.json", "Id")]
+        public readonly Dictionary<int, OutpostConditionTriggerRecord> OutpostConditionTriggerTable = [];
+
+        [LoadRecord("BundleBoxTable.json", "Id")]
+        public readonly Dictionary<int, BundleBoxRecord> BundleBoxTable = [];
+        
+        [LoadRecord("ItemSelectOptionRowTable.json", "Id")]
+        public readonly Dictionary<int, ItemSelectOptionRowRecord> ItemSelectOptionTable = [];
+
+        [LoadRecord("InterceptAnomalousTable.json", "Id")]
+        public readonly Dictionary<int, InterceptAnomalousRecord_Raw> InterceptAnomalous = [];
+
+        [LoadRecord("InterceptAnomalousManagerTable.json", "Id")]
+        public readonly Dictionary<int, InterceptAnomalousManagerRecord_Raw> InterceptAnomalousManager = [];
+
+        // solo raid data Table
+        [LoadRecord("SoloRaidManagerTable.json", "Id")]
+        public readonly Dictionary<int, SoloRaidManagerRecord> SoloRaidManagerTable = [];
+        [LoadRecord("SoloRaidPresetTable.json", "Id")]
+        public readonly Dictionary<int, SoloRaidPresetRecord> SoloRaidPresetTable = [];
+
+        // Monster data Table
+        [LoadRecord("MonsterStatEnhanceTable.json", "Id")]
+        public readonly Dictionary<int, MonsterStatEnhanceRecord> MonsterStatEnhanceTable = [];
+
+
         static async Task<GameData> BuildAsync()
         {
             await Load();
