@@ -113,6 +113,12 @@ public class User
     public List<NetPlaySodaEachGameInfo> ArcadePlaySodaInfoList = [];
     public NetArcadeMvgData ArcadeInTheMirrorData = new();
 
+    public ReqSaveProfileCardDecorationLayout ProfileCardDecoration = new();
+    public ReqSetProfileRepresentativeFrame ProfileRepresentativeFrame = new();
+
+    public Dictionary<long, AwakeningOption> EquipmentAwakeningOptions = [];
+    public ResetAwakeningOption ResetAwakeningOption = new();
+
     public TriggerModel AddTrigger(Trigger type, int value, int conditionId = 0)
     {
         TriggerModel t = new()

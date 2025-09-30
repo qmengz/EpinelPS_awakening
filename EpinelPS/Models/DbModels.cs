@@ -109,7 +109,7 @@ namespace EpinelPS.Models
         public List<int> CompletedDailyMissions = [];
         public int DailyMissionPoints;
         public SimroomData SimRoomData = new();
-        
+
         public bool UnlimitedCounseling = false;
         public Dictionary<int, int> DailyCounselCount = [];
     }
@@ -246,5 +246,30 @@ namespace EpinelPS.Models
         public int ObtainedRewards { get; set; } = 0;
         public bool RecievedFinalReward { get; set; }
         public bool CompletedPerfectly { get; set; }
+    }
+    public class AwakeningOption
+    {
+        public int Option1Id { get; set; }
+        public bool Option1Lock { get; set; }
+        public bool IsOption1DisposableLock { get; set; }
+        public int Option2Id { get; set; }
+        public bool Option2Lock { get; set; }
+        public bool IsOption2DisposableLock { get; set; }
+        public int Option3Id { get; set; }
+        public bool Option3Lock { get; set; }
+        public bool IsOption3DisposableLock { get; set; }
+    }
+    public class ResetAwakeningOption
+    {
+        public long Isn { get; set; }
+        public int Option1Id { get; set; }
+        public bool Option1Lock { get; set; }
+        public bool IsOption1DisposableLock { get; set; }
+        public int Option2Id { get; set; }
+        public bool Option2Lock { get; set; }
+        public bool IsOption2DisposableLock { get; set; }
+        public int Option3Id { get; set; }
+        public bool Option3Lock { get; set; }
+        public bool IsOption3DisposableLock { get; set; }
     }
 }
