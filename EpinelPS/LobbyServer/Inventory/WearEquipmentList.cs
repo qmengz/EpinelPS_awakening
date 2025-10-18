@@ -1,7 +1,6 @@
-﻿using EpinelPS.Database;
+﻿using EpinelPS.Data;
+using EpinelPS.Database;
 using EpinelPS.Utils;
-using EpinelPS.Data;
-using System.Linq;
 
 namespace EpinelPS.LobbyServer.Inventory
 {
@@ -15,16 +14,17 @@ namespace EpinelPS.LobbyServer.Inventory
 
             ResWearEquipmentList response = new();
 
+            // TODO optimize
             foreach (long item2 in req.IsnList)
             {
                 int pos = NetUtils.GetItemPos(user, item2);
 
                 // Check if the item being equipped is T10
                 ItemData? itemToCheck = user.Items.FirstOrDefault(x => x.Isn == item2);
-                if (itemToCheck != null && IsT10Equipment(itemToCheck.ItemType))
+                if (itemToCheck != null && GameData.Instance.IsT10Equipment(itemToCheck.ItemType))
                 {
                     // If trying to equip a T10 item, check if there's already a T10 item in that position
-                    bool hasT10InPosition = user.Items.Any(x => x.Position == pos && x.Csn == req.Csn && IsT10Equipment(x.ItemType));
+                    bool hasT10InPosition = user.Items.Any(x => x.Position == pos && x.Csn == req.Csn && GameData.Instance.IsT10Equipment(x.ItemType));
                     if (hasT10InPosition)
                     {
                         // Don't allow replacing T10 equipment
@@ -43,14 +43,13 @@ namespace EpinelPS.LobbyServer.Inventory
                 // unequip previous items
                 foreach (ItemData item in user.Items.ToArray())
                 {
+                    // Check if the item being unequipped is T10
+                    if (GameData.Instance.IsT10Equipment(item.ItemType))
+                    {
+                        continue;
+                    }
                     if (item.Position == pos && item.Csn == req.Csn)
                     {
-                        // Check if the item being unequipped is T10
-                        if (IsT10Equipment(item.ItemType))
-                        {
-                            continue;
-                        }
-
                         item.Csn = 0;
                         item.Position = 0;
                         response.Items.Add(NetUtils.ToNet(item));
@@ -137,23 +136,6 @@ namespace EpinelPS.LobbyServer.Inventory
             JsonDb.Save();
 
             await WriteDataAsync(response);
-        }
-
-        private bool IsT10Equipment(int itemTypeId)
-        {
-            // Equipment ID format: 3 + Slot(1Head2Body3Arm4Leg) + Class(1Attacker2Defender3Supporter) + Rarity(01-09 T1-T9, 10 T10) + 01
-            // T10 equipment has rarity "10" in positions 3-4 (0-based indexing) for 7-digit IDs
-            string itemTypeStr = itemTypeId.ToString();
-
-            // Check if this is an equipment item (starts with 3) and has 7 digits
-            if (itemTypeStr.Length == 7 && itemTypeStr[0] == '3')
-            {
-                // Extract the rarity part (positions 3-4)
-                string rarityPart = itemTypeStr.Substring(3, 2);
-                return rarityPart == "10";
-            }
-
-            return false;
         }
     }
 }

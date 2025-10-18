@@ -1,4 +1,5 @@
-﻿using EpinelPS.Utils;
+﻿using EpinelPS.Data;
+using EpinelPS.Utils;
 
 namespace EpinelPS.LobbyServer.Shop
 {
@@ -7,16 +8,12 @@ namespace EpinelPS.LobbyServer.Shop
     {
         protected override async Task HandleAsync()
         {
-            ReqGetShop x = await ReadData<ReqGetShop>();
+            ReqGetShop req = await ReadData<ReqGetShop>();
 
             ResGetShop response = new()
             {
-                Shop = new NetShopProductData
-                {
-                    ShopCategory = x.ShopCategory
-                }
+                Shop = ShopHelper.InitShopData((ShopCategoryType)req.ShopCategory)
             };
-
             // TODO
 
             await WriteDataAsync(response);

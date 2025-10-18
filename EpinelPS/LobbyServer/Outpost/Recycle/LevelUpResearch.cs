@@ -52,6 +52,8 @@ namespace EpinelPS.LobbyServer.Outpost.Recycle
 
                 progress.Level += 1;
                 progress.Hp = statRecord.Hp * progress.Level;
+                progress.Attack = statRecord.Attack * progress.Level;
+                progress.Defense = statRecord.Defence * progress.Level;
                 response.Recycle = new()
                 {
                     Tid = req.Tid,
@@ -70,6 +72,9 @@ namespace EpinelPS.LobbyServer.Outpost.Recycle
                 (int newLevel, int newExp) = CalcCorpAndClassLevelUp(statRecord.RecycleType, netItem.Count, progress.Level, progress.Exp);
                 progress.Level = newLevel;
                 progress.Exp = newExp;
+                progress.Hp = statRecord.Hp * progress.Level;
+                progress.Attack = statRecord.Attack * progress.Level;
+                progress.Defense = statRecord.Defence * progress.Level;
                 response.Recycle = new()
                 {
                     Tid = req.Tid,

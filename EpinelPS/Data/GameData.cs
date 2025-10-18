@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using System.Diagnostics;
 using System.Security.Cryptography;
-using EpinelPS.Database;
 using EpinelPS.Utils;
 using ICSharpCode.SharpZipLib.Zip;
 using MemoryPack;
@@ -36,6 +35,8 @@ namespace EpinelPS.Data
         private bool UseMemoryPack = true;
 
         public readonly Dictionary<string, FieldMapRecord> MapData = [];
+        public readonly Dictionary<string, EventScenarioDialogRecord> EventScenarioDialogTable = [];
+        public readonly Dictionary<int, ProgressEventRecord> ProgressEventTable = [];
 
         [LoadRecord("MainQuestTable.json", "Id")]
         public readonly Dictionary<int, MainQuestRecord> QuestDataRecords = [];
@@ -60,8 +61,8 @@ namespace EpinelPS.Data
 
         [LoadRecord("ContentsTutorialTable.json", "Id")]
         public readonly Dictionary<int, ContentsTutorialRecord> TutorialTable = [];
-        [LoadRecord("ItemEquipTable.json", "Id")]
 
+        [LoadRecord("ItemEquipTable.json", "Id")]
         public readonly Dictionary<int, ItemEquipRecord> ItemEquipTable = [];
 
         [LoadRecord("ItemMaterialTable.json", "Id")]
@@ -289,6 +290,55 @@ namespace EpinelPS.Data
         [LoadRecord("PassMissionTable.json", "Id")]
         public readonly Dictionary<int, PassMissionRecord> PassMissionTable = [];
 
+        [LoadRecord("EventMissionListTable.json", "Id")]
+        public readonly Dictionary<int, EventMissionListRecord> EventMissionListTable = [];
+
+        [LoadRecord("SupportCharacterTable.json", "Id")]
+        public readonly Dictionary<int, SupportCharacterRecord> SupportCharacterTable = [];
+
+        [LoadRecord("EventFieldNoticePopupTable.json", "Id")]
+        public readonly Dictionary<int, EventFieldNoticePopupRecord_Raw> EventFieldNoticePopupTable = [];
+        [LoadRecord("AutoChargeTable.json", "Id")]
+        public readonly Dictionary<int, AutoChargeRecord> AutoChargeTable = [];
+        [LoadRecord("ContentsShopTable.json", "Id")]
+        public readonly Dictionary<int, ContentsShopRecord> ContentsShopTable = [];
+        [LoadRecord("ContentsShopProductTable.json", "Id")]
+        public readonly Dictionary<int, ContentsShopProductRecord> ContentsShopProductTable = [];
+        [LoadRecord("ContentsOpenTable.json", "Id")]
+        public readonly Dictionary<ContentsOpen, ContentsOpenRecord> ContentsOpenTable = [];
+        [LoadRecord("InAppShopManagerTable.json", "Id")]
+        public readonly Dictionary<int, InAppShopManagerRecord> InAppShopManagerTable = [];
+
+        [LoadRecord("ProfileCardObjectTable.json", "Id")]
+        public readonly Dictionary<int, ProfileCardObjectRecord> ProfileCardObjectTable = [];
+
+        [LoadRecord("OutpostConditionTriggerTable.json", "Id")]
+        public readonly Dictionary<int, OutpostConditionTriggerRecord> OutpostConditionTriggerTable = [];
+
+        [LoadRecord("BundleBoxTable.json", "Id")]
+        public readonly Dictionary<int, BundleBoxRecord> BundleBoxTable = [];
+
+        [LoadRecord("ItemSelectOptionTable.json", "Id")]
+        public readonly Dictionary<int, ItemSelectOptionRecord> ItemSelectOptionTable = [];
+
+        [LoadRecord("InterceptAnomalousTable.json", "Id")]
+        public readonly Dictionary<int, InterceptAnomalousRecord_Raw> InterceptAnomalous = [];
+
+        [LoadRecord("InterceptAnomalousManagerTable.json", "Id")]
+        public readonly Dictionary<int, InterceptAnomalousManagerRecord_Raw> InterceptAnomalousManager = [];
+
+        // solo raid data Table
+        [LoadRecord("SoloRaidManagerTable.json", "Id")]
+        public readonly Dictionary<int, SoloRaidManagerRecord> SoloRaidManagerTable = [];
+        [LoadRecord("SoloRaidPresetTable.json", "Id")]
+        public readonly Dictionary<int, SoloRaidPresetRecord> SoloRaidPresetTable = [];
+
+        // Monster data Table
+        [LoadRecord("MonsterStatEnhanceTable.json", "Id")]
+        public readonly Dictionary<int, MonsterStatEnhanceRecord> MonsterStatEnhanceTable = [];
+
+
+
         static async Task<GameData> BuildAsync()
         {
             await Load();
@@ -332,7 +382,7 @@ namespace EpinelPS.Data
 
         #region Data loading
         private static byte[] PresharedValue = [0xCB, 0xC2, 0x1C, 0x6F, 0xF3, 0xF5, 0x07, 0xF5, 0x05, 0xBA, 0xCA, 0xD4, 0x98, 0x28, 0x84, 0x1F, 0xF0, 0xD1, 0x38, 0xC7, 0x61, 0xDF, 0xD6, 0xE6, 0x64, 0x9A, 0x85, 0x13, 0x3E, 0x1A, 0x6A, 0x0C, 0x68, 0x0E, 0x2B, 0xC4, 0xDF, 0x72, 0xF8, 0xC6, 0x55, 0xE4, 0x7B, 0x14, 0x36, 0x18, 0x3B, 0xA7, 0xD1, 0x20, 0x81, 0x22, 0xD1, 0xA9, 0x18, 0x84, 0x65, 0x13, 0x0B, 0xED, 0xA3, 0x00, 0xE5, 0xD9];
-        private static RSAParameters LoadParameters = new() 
+        private static RSAParameters LoadParameters = new()
         {
             Exponent = [0x01, 0x00, 0x01],
             Modulus = [0x89, 0xD6, 0x66, 0x00, 0x7D, 0xFC, 0x7D, 0xCE, 0x83, 0xA6, 0x62, 0xE3, 0x1A, 0x5E, 0x9A, 0x53, 0xC7, 0x8A, 0x27, 0xF3, 0x67, 0xC1, 0xF3, 0xD4, 0x37, 0xFE, 0x50, 0x6D, 0x38, 0x45, 0xDF, 0x7E, 0x73, 0x5C, 0xF4, 0x9D, 0x40, 0x4C, 0x8C, 0x63, 0x21, 0x97, 0xDF, 0x46, 0xFF, 0xB2, 0x0D, 0x0E, 0xDB, 0xB2, 0x72, 0xB4, 0xA8, 0x42, 0xCD, 0xEE, 0x48, 0x06, 0x74, 0x4F, 0xE9, 0x56, 0x6E, 0x9A, 0xB1, 0x60, 0x18, 0xBC, 0x86, 0x0B, 0xB6, 0x32, 0xA7, 0x51, 0x00, 0x85, 0x7B, 0xC8, 0x72, 0xCE, 0x53, 0x71, 0x3F, 0x64, 0xC2, 0x25, 0x58, 0xEF, 0xB0, 0xC9, 0x1D, 0xE3, 0xB3, 0x8E, 0xFC, 0x55, 0xCF, 0x8B, 0x02, 0xA5, 0xC8, 0x1E, 0xA7, 0x0E, 0x26, 0x59, 0xA8, 0x33, 0xA5, 0xF1, 0x11, 0xDB, 0xCB, 0xD3, 0xA7, 0x1F, 0xB1, 0xC6, 0x10, 0x39, 0xC8, 0x31, 0x1D, 0x60, 0xDB, 0x0D, 0xA4, 0x13, 0x4B, 0x2B, 0x0E, 0xF3, 0x6F, 0x69, 0xCB, 0xA8, 0x62, 0x03, 0x69, 0xE6, 0x95, 0x6B, 0x8D, 0x11, 0xF6, 0xAF, 0xD9, 0xC2, 0x27, 0x3A, 0x32, 0x12, 0x05, 0xC3, 0xB1, 0xE2, 0x81, 0x4B, 0x40, 0xF8, 0x8B, 0x8D, 0xBA, 0x1F, 0x55, 0x60, 0x2C, 0x09, 0xC6, 0xED, 0x73, 0x96, 0x32, 0xAF, 0x5F, 0xEE, 0x8F, 0xEB, 0x5B, 0x93, 0xCF, 0x73, 0x13, 0x15, 0x6B, 0x92, 0x7B, 0x27, 0x0A, 0x13, 0xF0, 0x03, 0x4D, 0x6F, 0x5E, 0x40, 0x7B, 0x9B, 0xD5, 0xCE, 0xFC, 0x04, 0x97, 0x7E, 0xAA, 0xA3, 0x53, 0x2A, 0xCF, 0xD2, 0xD5, 0xCF, 0x52, 0xB2, 0x40, 0x61, 0x28, 0xB1, 0xA6, 0xF6, 0x78, 0xFB, 0x69, 0x9A, 0x85, 0xD6, 0xB9, 0x13, 0x14, 0x6D, 0xC4, 0x25, 0x36, 0x17, 0xDB, 0x54, 0x0C, 0xD8, 0x77, 0x80, 0x9A, 0x00, 0x62, 0x83, 0xDD, 0xB0, 0x06, 0x64, 0xD0, 0x81, 0x5B, 0x0D, 0x23, 0x9E, 0x88, 0xBD],
@@ -493,7 +543,7 @@ namespace EpinelPS.Data
 
                 return deserializedObject;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logging.WriteLine($"Failed to parse {entry}:\n{ex}\n", LogType.Error);
                 return [];
@@ -518,6 +568,24 @@ namespace EpinelPS.Data
                     foreach (FieldMapRecord map in x)
                     {
                         MapData.Add(map.Id, map);
+                    }
+                }
+                else if (item.Name.StartsWith("EventScenarioDialogTable.event_"))
+                {
+                    EventScenarioDialogRecord[] x = await LoadZip<EventScenarioDialogRecord>(item.Name, progress);
+
+                    foreach (EventScenarioDialogRecord map in x)
+                    {
+                        EventScenarioDialogTable.TryAdd(map.Id, map);
+                    }
+                }
+                else if (item.Name.StartsWith("ProgressEventTable"))
+                {
+                    ProgressEventRecord[] x = await LoadZip<ProgressEventRecord>(item.Name, progress);
+
+                    foreach (ProgressEventRecord map in x)
+                    {
+                        ProgressEventTable.TryAdd(map.Id, map);
                     }
                 }
             }
@@ -582,16 +650,17 @@ namespace EpinelPS.Data
         }
         public int GetUserMinXpForLevel(int targetLevel)
         {
-            for (int i = 1; i < UserExpDataRecords.Count + 1; i++)
+            int minXp = -1;
+            int MaxLevel = UserExpDataRecords.Values.Max(x => x.Level);
+            if (targetLevel >= MaxLevel) return UserExpDataRecords.Values.Max(x => x.Exp);
+            UserExpDataRecords.Values.ToList().ForEach(x =>
             {
-                UserExpRecord item = UserExpDataRecords[i];
-
-                if (targetLevel == item.Level)
+                if (x.Level == targetLevel)
                 {
-                    return item.Exp;
+                    minXp = x.Exp;
                 }
-            }
-            return -1;
+            });
+            return minXp;
         }
         public string? GetMapIdFromDBFieldName(string field)
         {
@@ -661,6 +730,18 @@ namespace EpinelPS.Data
 
             // Return null if item type not found
             return ItemSubType.None;
+        }
+
+        public bool IsT10Equipment(int itemType)
+        {
+            // Check if it's an equipment item
+            if (ItemEquipTable.TryGetValue(itemType, out ItemEquipRecord? equipRecord))
+            {
+                return equipRecord.ItemRare == EquipmentRarityType.T10;
+            }
+
+            // Return false if item type not found
+            return false;
         }
 
         internal IEnumerable<int> GetStageIdsForChapter(int chapterNumber, bool normal)
@@ -756,7 +837,8 @@ namespace EpinelPS.Data
 
         internal int GetConditionReward(int groupId, long damage)
         {
-            IEnumerable<KeyValuePair<int, ConditionRewardRecord>> results = ConditionRewards.Where(x => x.Value.Group == groupId && x.Value.ValueMin <= damage && (x.Value.ValueMax == 0 || x.Value.ValueMax >= damage));
+            IEnumerable<KeyValuePair<int, ConditionRewardRecord>> results = ConditionRewards.Where(
+                x => x.Value.Group == groupId && x.Value.ValueMin <= damage && (x.Value.ValueMax >= damage || x.Value.ValueMax == 0));
             if (results.Any())
                 return results.FirstOrDefault().Value.RewardId;
             else return 0;
@@ -764,13 +846,19 @@ namespace EpinelPS.Data
 
         public FavoriteItemQuestRecord? GetFavoriteItemQuestTableData(int questId)
         {
-            FavoriteItemQuestTable.TryGetValue(questId, out FavoriteItemQuestRecord?data);
+            FavoriteItemQuestTable.TryGetValue(questId, out FavoriteItemQuestRecord? data);
             return data;
         }
 
         public FavoriteItemQuestStageRecord? GetFavoriteItemQuestStageData(int stageId)
         {
             FavoriteItemQuestStageTable.TryGetValue(stageId, out FavoriteItemQuestStageRecord? data);
+            return data;
+        }
+
+        public ProfileCardObjectRecord? GetProfileCardObjectTableData(int objectId)
+        {
+            ProfileCardObjectTable.TryGetValue(objectId, out ProfileCardObjectRecord? data);
             return data;
         }
     }

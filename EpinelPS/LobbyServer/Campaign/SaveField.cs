@@ -1,4 +1,5 @@
-﻿using EpinelPS.Utils;
+﻿using EpinelPS.Database;
+using EpinelPS.Utils;
 
 namespace EpinelPS.LobbyServer.Campaign
 {
@@ -20,7 +21,8 @@ namespace EpinelPS.LobbyServer.Campaign
             {
                 user.MapJson[req.MapId] = req.Json;
             }
-
+            
+            JsonDb.Save();
             await WriteDataAsync(response);
         }
     }

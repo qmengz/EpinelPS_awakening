@@ -1,6 +1,6 @@
-﻿using EpinelPS.Database;
+﻿using EpinelPS.Data;
+using EpinelPS.Database;
 using EpinelPS.Utils;
-using EpinelPS.Data;
 
 namespace EpinelPS.LobbyServer.Intercept
 {
@@ -9,14 +9,12 @@ namespace EpinelPS.LobbyServer.Intercept
     {
         protected override async Task HandleAsync()
         {
-            ReqGetInterceptData req =  await ReadData<ReqGetInterceptData>();
-
-            int specialId = GetCurrentInterceptionIds();
+            ReqGetInterceptData req = await ReadData<ReqGetInterceptData>();
 
             ResGetInterceptData response = new()
             {
                 NormalInterceptGroup = 1,
-                SpecialInterceptId = specialId,
+                SpecialInterceptId = GetCurrentInterceptionIds(), // TODO switch this out each reset
                 TicketCount = User.ResetableData.InterceptionTickets,
                 MaxTicketCount = JsonDb.Instance.MaxInterceptionCount
             };
@@ -24,17 +22,17 @@ namespace EpinelPS.LobbyServer.Intercept
             await WriteDataAsync(response);
         }
 
-        private int GetCurrentInterceptionIds()
-        {  
-                var specialTable = GameData.Instance.InterceptSpecial;
-                var specialBosses = specialTable.Values.Where(x => x.Group == 1).OrderBy(x => x.Order).ToList();
+        private static int GetCurrentInterceptionIds()
+        {
+            var specialTable = GameData.Instance.InterceptSpecial;
+            var specialBosses = specialTable.Values.Where(x => x.Group == 1).OrderBy(x => x.Order).ToList();
 
-                var dayOfYear = DateTime.UtcNow.DayOfYear;
-                var specialIndex = dayOfYear % specialBosses.Count;
+            var dayOfYear = DateTime.UtcNow.DayOfYear;
+            var specialIndex = dayOfYear % specialBosses.Count;
 
-                var specialId = specialBosses[specialIndex].Id;
-                return specialId;
-           
+            var specialId = specialBosses[specialIndex].Id;
+            return specialId;
+
         }
     }
 }

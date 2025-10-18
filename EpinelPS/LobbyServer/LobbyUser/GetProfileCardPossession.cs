@@ -1,4 +1,5 @@
 ﻿using EpinelPS.Utils;
+using EpinelPS.Data;
 
 namespace EpinelPS.LobbyServer.LobbyUser
 {
@@ -10,7 +11,18 @@ namespace EpinelPS.LobbyServer.LobbyUser
             ReqProfileCardObjectList req = await ReadData<ReqProfileCardObjectList>();
 
             ResProfileCardObjectList response = new();
-            // TODO
+            foreach (var item in GameData.Instance.ProfileCardObjectTable.Values)
+            {
+                if (item.ObjectType == ObjectType.BackGround)
+                {
+                    response.BackgroundIds.Add(item.Id);
+                }
+                else if (item.ObjectType == ObjectType.Sticker)
+                {
+                    response.StickerIds.Add(item.Id);
+                }
+            }
+
             await WriteDataAsync(response);
         }
     }

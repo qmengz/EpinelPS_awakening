@@ -52,7 +52,7 @@ namespace EpinelPS.LobbyServer
         }
         public async Task HandleAsync(string authToken)
         {
-            this.UsedAuthToken = authToken;
+            UsedAuthToken = authToken;
 
             PasetoTokenValidationResult encryptionToken = new PasetoBuilder().Use(ProtocolVersion.V4, Purpose.Local)
                              .WithKey(JsonDb.Instance.LauncherTokenKey, Encryption.SymmetricKey)
@@ -67,16 +67,19 @@ namespace EpinelPS.LobbyServer
         protected abstract Task HandleAsync();
 
 
-        private static void PrintMessage<T>(T data) where T : IMessage, new()
+        private static void PrintMessage<T>(string type, T data) where T : IMessage, new()
         {
             string? str = (string?)data.GetType().InvokeMember("ToString", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.InvokeMethod, null, data, null);
             if (str != null)
-                Logging.WriteLine(str, LogType.Debug);
+            {
+                Logging.WriteLine("", LogType.Debug);
+                Logging.WriteLine(type + " " + data.GetType().Name + ": " + str, LogType.Debug);
+            }
         }
+
         protected async Task WriteDataAsync<T>(T data) where T : IMessage, new()
         {
-            Logging.WriteLine("Writing " + data.GetType().Name, LogType.Debug);
-            PrintMessage(data);
+            PrintMessage("WriteData", data);
             Logging.WriteLine("", LogType.Debug);
 
             if (ctx == null)
@@ -116,9 +119,9 @@ namespace EpinelPS.LobbyServer
                 msg2.MergeFrom(Contents);
 
                 Logging.WriteLine("Reading " + msg2.GetType().Name, LogType.Debug);
-                PrintMessage(msg2);
+                PrintMessage("ReadData", msg2);
                 Logging.WriteLine("", LogType.Debug);
-                
+
                 return msg2;
             }
             else
@@ -130,7 +133,7 @@ namespace EpinelPS.LobbyServer
                 PacketDecryptResponse bin = await PacketDecryption.DecryptOrReturnContentAsync(ctx);
                 msg.MergeFrom(bin.Contents);
 
-                PrintMessage(msg);
+                PrintMessage("ReadData", msg);
                 Logging.WriteLine("", LogType.Debug);
 
                 UserId = bin.UserId;

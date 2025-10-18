@@ -1,4 +1,4 @@
-﻿using EpinelPS.Database;
+﻿using EpinelPS.Data;
 using EpinelPS.Utils;
 
 namespace EpinelPS.LobbyServer.Character
@@ -40,7 +40,7 @@ namespace EpinelPS.LobbyServer.Character
                 response.Synchro.Slots.Add(new NetSynchroSlot() { Slot = item.Slot, AvailableRegisterAt = 1, Csn = item.CharacterSerialNumber });
             }
 
-            response.Synchro.SynchroMaxLv = 1000;
+            response.Synchro.SynchroMaxLv = GameData.Instance.LevelData.Values.Max(x => x.Level);
             response.Synchro.SynchroLv = user.GetSynchroLevel();
             response.Synchro.IsChanged = user.SynchroDeviceUpgraded;
 

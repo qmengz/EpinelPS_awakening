@@ -1,3 +1,4 @@
+using EpinelPS.Data;
 using EpinelPS.Database;
 using EpinelPS.Utils;
 
@@ -10,13 +11,32 @@ namespace EpinelPS.LobbyServer.Intercept
         {
             ReqFastClearIntercept req = await ReadData<ReqFastClearIntercept>();
 
+            User user = GetUser();
+
+            if (user.ResetableData.InterceptionTickets == 0)
+            {
+                Logging.WriteLine("Attempted to fast clear interception when 0 tickets remain", LogType.Warning);
+            }
+
+            long damage = 0;
+            if (user.ClearIntercepts.TryGetValue(req.Intercept * 10 + req.InterceptId, out ReqClearIntercept? clearData))
+            {
+                damage = clearData.Damage;
+            }
+
+            InterceptionClearResult sRes = InterceptionHelper.Clear(user, req.Intercept, req.InterceptId, damage);
+            user.ResetableData.InterceptionTickets--;
             ResFastClearIntercept response = new()
             {
-                TicketCount = User.ResetableData.InterceptionTickets,
+                NormalReward = sRes.NormalReward,
+                BonusReward = sRes.BonusReward,
+                TicketCount = user.ResetableData.InterceptionTickets,
                 MaxTicketCount = JsonDb.Instance.MaxInterceptionCount,
-                Damage = 0
+                Result = FastClearResult.Success,
+                Damage = damage
             };
-
+            user.AddTrigger(Trigger.InterceptClear, 1);
+            JsonDb.Save();
             await WriteDataAsync(response);
         }
     }

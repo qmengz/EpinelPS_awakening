@@ -13,9 +13,12 @@ namespace EpinelPS.LobbyServer.Intercept
 
             if (user.ResetableData.InterceptionTickets == 0)
             {
-                Logging.WriteLine("Attempted to clear interception when 0 tickets remain", LogType.WarningAntiCheat);
-               
+                Logging.WriteLine("Attempted to clear interception when 0 tickets remain", LogType.Warning);
             }
+
+            // Save cleared intercept data
+            if (user.ClearIntercepts.TryAdd(req.Intercept * 10 + req.InterceptId, req))
+                user.ClearIntercepts[req.Intercept * 10 + req.InterceptId] = req;
 
             InterceptionClearResult sRes = InterceptionHelper.Clear(user, req.Intercept, req.InterceptId, req.Damage);
 

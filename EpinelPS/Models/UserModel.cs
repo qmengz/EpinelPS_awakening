@@ -115,7 +115,26 @@ public class User
     public List<NetPlaySodaEachGameInfo> ArcadePlaySodaInfoList = [];
     public NetArcadeMvgData ArcadeInTheMirrorData = new();
 
-    public Dictionary<int, PassData> UserPassInfo = []; // user pass data, key is PassId
+    public ReqSaveProfileCardDecorationLayout ProfileCardDecoration = new();
+    public ReqSetProfileRepresentativeFrame ProfileRepresentativeFrame = new();
+
+    // Intercept anomalous data
+    public Dictionary<int, ReqEnterInterceptAnomalous> EnterInterceptAnomalous = [];
+    public Dictionary<int, ReqFinishInterceptAnomalous> FinishInterceptAnomalous = [];
+
+    // Intercept data
+    public Dictionary<int, ReqEnterIntercept> EnterIntercepts = [];
+    public Dictionary<int, ReqClearIntercept> ClearIntercepts = [];
+
+    // solo raid data
+    public Dictionary<long, SoloRaidInfo> SoloRaidData = [];
+
+    public Dictionary<int, MiniGameBHTutorialData> MiniGameBHTutorialInfo = [];
+
+    public Dictionary<int, GachaCustomData> GachaCustomInfo = [];
+
+    public Dictionary<int, PassData> UserPassInfo = []; // user pass data, key is PasstId
+
 
     public TriggerModel AddTrigger(Trigger type, int value, int conditionId = 0)
     {

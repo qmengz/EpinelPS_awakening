@@ -1,4 +1,5 @@
-﻿using EpinelPS.Utils;
+﻿using EpinelPS.Data;
+using EpinelPS.Utils;
 
 namespace EpinelPS.LobbyServer.Shop.InApp
 {
@@ -10,8 +11,18 @@ namespace EpinelPS.LobbyServer.Shop.InApp
             ReqGetInAppShopData x = await ReadData<ReqGetInAppShopData>();
 
             ResGetInAppShopData response = new();
-
-            response.InAppShopDataList.Add(new NetInAppShopData() { Id = 10001, StartDate = DateTime.Now.Ticks, EndDate = DateTime.Now.AddDays(2).Ticks });
+            var now = DateTime.UtcNow;
+            response.InAppShopDataList.AddRange(
+                GameData.Instance.InAppShopManagerTable.Values
+                    .Where(x => x.StartDate < now && x.EndDate > now)
+                    .Select(x => new NetInAppShopData
+                    {
+                        Id = x.Id,
+                        StartDate = x.StartDate.Ticks,
+                        EndDate = x.EndDate.Ticks,
+                    })
+            );
+            // response.InAppShopDataList.Add(new NetInAppShopData() { Id = 10001, StartDate = DateTime.UtcNow.Ticks, EndDate = DateTime.UtcNow.AddDays(2).Ticks });
 
             await WriteDataAsync(response);
         }

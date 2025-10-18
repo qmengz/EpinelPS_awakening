@@ -1,6 +1,7 @@
 using EpinelPS.Utils;
 using EpinelPS.Data;
 using EpinelPS.Database;
+
 namespace EpinelPS.LobbyServer.Outpost
 {
     [PacketPath("/outpost/getoutpostdata")]
@@ -75,6 +76,13 @@ namespace EpinelPS.LobbyServer.Outpost
             }
 
             response.TimeRewardBuffs.AddRange(NetUtils.GetOutpostTimeReward(user));
+
+            // condition triggers
+            foreach (var trigger in GameData.Instance.OutpostConditionTriggerTable.Values)
+            {
+                if (user.CompletedScenarios.Contains(trigger.EnterScenarioId))
+                    response.ConditionTriggerTidList.Add(trigger.Id);
+            }
 
             // TODO
             await WriteDataAsync(response);

@@ -29,6 +29,10 @@ namespace EpinelPS.LobbyServer.Character.Counsel
                 currentBondInfo.Exp += 100;
                 currentBondInfo.CounseledCount++;
                 currentBondInfo.CanCounselToday = true; // Always allow counseling
+                if (!currentBondInfo.CounselDialogCompleteIds.Contains(req.CounselTid))
+                {
+                    currentBondInfo.CounselDialogCompleteIds.Add(req.CounselTid);
+                }
                 UpdateAttractiveLevel(currentBondInfo);
 
                 response.Attractive = currentBondInfo;
@@ -66,7 +70,8 @@ namespace EpinelPS.LobbyServer.Character.Counsel
                     GainExp = 100
                 };
             }
-
+            // add trigger for counseling implement event
+            user.AddTrigger(Trigger.CharacterCounsel, 1);
             JsonDb.Save();
 
             await WriteDataAsync(response);

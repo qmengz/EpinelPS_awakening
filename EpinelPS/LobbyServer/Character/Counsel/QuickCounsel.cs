@@ -66,7 +66,8 @@ namespace EpinelPS.LobbyServer.Character.Counsel
                     GainExp = 100
                 };
             }
-
+            // add trigger for counseling implement event
+            user.AddTrigger(Trigger.CharacterCounsel, 1);
             JsonDb.Save();
 
             await WriteDataAsync(response);

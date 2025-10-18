@@ -1,4 +1,5 @@
-﻿using EpinelPS.Utils;
+﻿using EpinelPS.Database;
+using EpinelPS.Utils;
 
 namespace EpinelPS.LobbyServer.Event
 {
@@ -42,6 +43,7 @@ namespace EpinelPS.LobbyServer.Event
                 response.Json = mapJson;
             }
 
+            JsonDb.Save();
             await WriteDataAsync(response);
         }
     }

@@ -1,4 +1,5 @@
-﻿using EpinelPS.Utils;
+﻿using EpinelPS.Data;
+using EpinelPS.Utils;
 
 namespace EpinelPS.LobbyServer.Shop
 {
@@ -9,6 +10,16 @@ namespace EpinelPS.LobbyServer.Shop
         {
             ReqShopProductList req = await ReadData<ReqShopProductList>();
             ResShopProductList response = new();
+
+            response.Shops.Add(ShopHelper.InitShopData(ShopCategoryType.ShopNormal));
+            response.Shops.Add(ShopHelper.InitShopData(ShopCategoryType.ShopGuild));
+            response.Shops.Add(ShopHelper.InitShopData(ShopCategoryType.ShopDisassemble));
+            response.Shops.Add(ShopHelper.InitShopData(ShopCategoryType.ShopMaze));
+            response.Shops.Add(ShopHelper.InitShopData(ShopCategoryType.ShopPvP));
+            response.Shops.Add(ShopHelper.InitShopData(ShopCategoryType.ShopCooperationEvent));
+            response.Shops.Add(ShopHelper.InitShopData(ShopCategoryType.ShopStoryEvent));
+            response.Shops.Add(ShopHelper.InitShopData(ShopCategoryType.ShopMileage));
+            response.Shops.Add(ShopHelper.InitShopData(ShopCategoryType.ShopTrade));
 
             await WriteDataAsync(response);
         }

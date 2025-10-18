@@ -1,5 +1,6 @@
 ﻿using EpinelPS.Utils;
 using EpinelPS.Data;
+
 namespace EpinelPS.LobbyServer.Inventory
 {
     [PacketPath("/inventory/get")]

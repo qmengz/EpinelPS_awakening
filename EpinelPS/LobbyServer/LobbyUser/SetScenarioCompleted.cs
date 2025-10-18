@@ -17,7 +17,9 @@ namespace EpinelPS.LobbyServer.LobbyUser
                 Reward = new NetRewardData()
             };
 
-            user.CompletedScenarios.Add(req.ScenarioId);
+            // Mark scenario as completed
+            if (!user.CompletedScenarios.Contains(req.ScenarioId))
+                user.CompletedScenarios.Add(req.ScenarioId);
 
             if (GameData.Instance.ScenarioRewards.TryGetValue(req.ScenarioId, out ScenarioRewardsRecord? record))
             {

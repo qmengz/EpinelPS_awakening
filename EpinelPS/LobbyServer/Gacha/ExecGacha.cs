@@ -226,7 +226,7 @@ namespace EpinelPS.LobbyServer.Gacha
 
                 response.Gacha.Add(gacha);
 
-                user.AddTrigger(Trigger.GachaCharacter, 0, 0);
+                user.AddTrigger(Trigger.GachaCharacter, 1);
             }
             int TicketType = req.CurrencyType;
             int currencyType = TicketType == 5100 ? (int)CurrencyType.SilverMileageTicket : (int)CurrencyType.GoldMileageTicket;
@@ -234,7 +234,7 @@ namespace EpinelPS.LobbyServer.Gacha
 			response.Reward.Currency.Add(new NetCurrencyData() { Type = currencyType, Value = numberOfPulls });
             response.Reward.Currency.Add(new NetCurrencyData() { Type = (int)CurrencyType.DissolutionPoint, Value = totalBodyLabels });
             user.AddCurrency(currencyTypeToAdd, numberOfPulls);
-
+            user.AddTrigger(Trigger.GachaPremium, numberOfPulls);
             user.GachaTutorialPlayCount++;
 
             JsonDb.Save();

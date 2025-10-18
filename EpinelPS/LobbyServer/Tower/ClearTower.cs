@@ -31,8 +31,10 @@ namespace EpinelPS.LobbyServer.Tower
             // Parse TowerId to get TowerType and FloorNumber
             int TowerType = (TowerId / 10000) - 1; // For some weird reason the Type here doesn't match up with NetTowerData, thus the -1
             int FloorNumber = TowerId % 10000;
-
+            
+            Logging.WriteLine($"Clearing TowerId: {TowerId}, Type: {TowerType}, Floor: {FloorNumber}", LogType.Debug);
             // Update user's TowerProgress
+            if (TowerType <= 0) TowerType = 5; // Basic tower is type 5 in TowerProgress
             if (!user.TowerProgress.TryGetValue(TowerType, out int value))
             {
                 user.TowerProgress[TowerType] = record.Floor;
@@ -50,7 +52,7 @@ namespace EpinelPS.LobbyServer.Tower
             {
                 user.AddTrigger(Trigger.TowerElysionClear, TowerId);
             }
-            else if (record.Type== CorporationTowerType.MISSILIS)
+            else if (record.Type == CorporationTowerType.MISSILIS)
             {
                 user.AddTrigger(Trigger.TowerMissilisClear, TowerId);
             }

@@ -7,38 +7,60 @@ namespace EpinelPS.Utils
     {
         public static InterceptionClearResult Clear(User user, int type, int id, long damage = 0)
         {
-             InterceptionClearResult response = new();
+            InterceptionClearResult response = new();
 
-            //if (type != 1 && type != 2) throw new Exception("unknown interception type");
+            // type: 0 leveld 1 normal levels, 2 special
 
-            int conditionReward;
-            int percentRewardGroup;
-            if (type == 0 || type == 1)
+            int GroupId;
+            List<int> percentGroupIds = [];
+
+            // Validate type and id
+            if ((type == 0 || type == 1) && GameData.Instance.InterceptNormal.TryGetValue(id, out InterceptNormalRecord? temp))
             {
-                conditionReward = GameData.Instance.InterceptNormal[id].ConditionRewardGroup;
-                percentRewardGroup = GameData.Instance.InterceptNormal[id].PercentConditionRewardGroup;
+                GroupId = temp.ConditionRewardGroup;
+                percentGroupIds.Add(temp.PercentConditionRewardGroup);
+            }
+            else if (type == 2 && GameData.Instance.InterceptSpecial.TryGetValue(id, out InterceptSpecialRecord? SpecialTemp))
+            {
+                GroupId = SpecialTemp.ConditionRewardGroup;
+                percentGroupIds.Add(SpecialTemp.PercentConditionRewardGroup);
+            }
+            else if (type == 3 && GameData.Instance.InterceptAnomalous.TryGetValue(id, out InterceptAnomalousRecord_Raw? AnomalousTemp))
+            {
+                GroupId = AnomalousTemp.ConditionRewardGroup;
+                percentGroupIds.AddRange([.. AnomalousTemp.PercentConditionRewardGroups.Select(gid => gid.PercentConditionRewardGroup)]);
             }
             else
             {
-                conditionReward = GameData.Instance.InterceptSpecial[id].ConditionRewardGroup;
-                percentRewardGroup = GameData.Instance.InterceptSpecial[id].PercentConditionRewardGroup;
+                Logging.WriteLine($"Invalid interception type {type} or id {id}", LogType.Error);
+                return response;
             }
 
 
-            int normReward = GameData.Instance.GetConditionReward(conditionReward, damage);
+
+            // Calculate rewards based on damage
+            // Normal reward is based on condition_reward_group
+            int normReward = GameData.Instance.GetConditionReward(GroupId, damage);
             if (normReward != 0)
             {
                 response.NormalReward = RewardUtils.RegisterRewardsForUser(user, normReward);
             }
             else
             {
-                Logging.WriteLine($"unable to find reward which meets condition of damage {damage} and group {conditionReward}");
+                Logging.WriteLine($"No normal reward found for condition group {GroupId} with damage {damage}", LogType.Warning);
             }
 
-            int percentReward = GameData.Instance.GetConditionReward(percentRewardGroup, damage);
-            if (percentReward != 0)
+            // Bonus reward is based on percent_condition_reward_group
+            foreach (var percentGroupId in percentGroupIds)
             {
-                response.BonusReward = RewardUtils.RegisterRewardsForUser(user, percentReward);
+                if (percentGroupId != 0)
+                {
+                    int percentReward = GameData.Instance.GetConditionReward(percentGroupId, damage);
+                    if (percentReward != 0)
+                    {
+                        response.BonusReward = RewardUtils.RegisterRewardsForUser(user, percentReward, true);
+                    }
+                }
             }
 
             JsonDb.Save();

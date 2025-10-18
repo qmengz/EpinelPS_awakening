@@ -1,11 +1,5 @@
-using System.Globalization;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using EpinelPS.Data;
-using EpinelPS.Utils;
 using Google.Protobuf;
-using Paseto;
-using Paseto.Builder;
 
 namespace EpinelPS.Models
 {
@@ -65,17 +59,17 @@ namespace EpinelPS.Models
         // For harmony cubes that can be equipped to multiple characters
         public List<long> CsnList = [];
     }
-    
+
     public class EquipmentAwakeningData
     {
         public long Isn;
         public NetEquipmentAwakeningOption Option;
-        public bool IsNewData; 
-        
+        public bool IsNewData;
+
         public EquipmentAwakeningData()
         {
             Option = new NetEquipmentAwakeningOption();
-            IsNewData = false; 
+            IsNewData = false;
         }
     }
     public class EventData
@@ -85,6 +79,7 @@ namespace EpinelPS.Models
         public int Diff = 0; // Default value for Diff
         public int LastStage = 0; // Default value for LastStage
     }
+
     public class LoginEventData
     {
         public List<int> Days = [];
@@ -130,8 +125,8 @@ namespace EpinelPS.Models
         public int DailyMissionPoints;
         public SimroomData SimRoomData = new();
 
+        public bool UnlimitedCounseling = false;
         public Dictionary<int, int> DailyCounselCount = [];
-    
     }
     public class WeeklyResetableData
     {
@@ -267,7 +262,20 @@ namespace EpinelPS.Models
         public bool RecievedFinalReward { get; set; }
         public bool CompletedPerfectly { get; set; }
     }
-    
+
+    public class MiniGameBHTutorialData
+    {
+        public int BHId { get; set; } = 0;
+        public int TutorialId { get; set; } = 0;
+        public long UpdatedAt { get; set; } = 0;
+    }
+
+    public class GachaCustomData
+    {
+        public int Type { get; set; } = 0;
+        public List<NetGachaCustomData> Custom { get; set; } = [];
+    }
+
     public class PassRankData
     {
         public int PassRank { get; set; } = 0;
@@ -288,5 +296,20 @@ namespace EpinelPS.Models
         public string LastCompleteAt { get; set; } = "";
         public List<PassRankData> PassRankList { get; set; } = [];
         public List<PassMissionData> PassMissionList { get; set; } = [];
+    }
+
+    public class SoloRaidInfo
+    {
+        public int RaidId { get; set; }
+        public int RaidLevel { get; set; }
+        public int RaidOpenCount { get; set; }
+        public int RaidJoinCount { get; set; }
+        public long Hp { get; set; }
+        public long TotalDamage { get; set; }
+        public SoloRaidPeriodResult PeriodResult { get; set; }
+        public SoloRaidBanResult BanResult { get; set; }
+        public SoloRaidStatus Status { get; set; }
+        public List<ReqSetSoloRaidDamage> SoloRaidDamageList { get; set; } = [];
+        public SoloRaidType Type { get; set; } = SoloRaidType.Normal;
     }
 }

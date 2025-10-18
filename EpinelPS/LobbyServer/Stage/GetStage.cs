@@ -1,5 +1,4 @@
 ﻿using EpinelPS.Data;
-using EpinelPS.Database;
 using EpinelPS.Utils;
 
 namespace EpinelPS.LobbyServer.Stage
@@ -40,7 +39,8 @@ namespace EpinelPS.LobbyServer.Stage
                     }
                     foreach (NetFieldObject obj in item.Value.CompletedObjects)
                     {
-                        f.Objects.Add(obj);
+                        if (obj != null && obj.Type == 1)
+                            f.Objects.Add(obj);
                     }
                     BossEntered = item.Value.BossEntered;
                     break;
