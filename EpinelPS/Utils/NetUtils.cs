@@ -80,30 +80,37 @@ public class NetUtils
     }
 
 
+    /// <summary>Builds the client inventory, merging stackables and keeping unique items.</summary>
+    /// <param name="user">Player save data (read only).</param>
+    /// <returns>List of NetUserItemData for the client inventory.</returns>
     public static List<NetUserItemData> GetUserItems(User user)
     {
         List<NetUserItemData> ret = [];
-        Dictionary<int, NetUserItemData> itemDictionary = [];
+        Dictionary<string, NetUserItemData> items = [];
 
         foreach (DbItemData? item in user.Items.ToList())
         {
             if (item.Csn == 0)
             {
-                if (itemDictionary.TryGetValue(item.ItemType, out NetUserItemData? value))
+                // Stackable: merge by ItemType, summing the real Count of each record.
+                string key = "stack:" + item.ItemType;
+                if (items.TryGetValue(key, out NetUserItemData? value))
                 {
-                    value.Count++;
+                    value.Count += item.Count;
                 }
                 else
                 {
-                    itemDictionary[item.ItemType] = UserItemDataToNet(item);
+                    items[key] = UserItemDataToNet(item);
                 }
             }
             else
             {
-                itemDictionary[item.ItemType] = UserItemDataToNet(item);
+                // Unique instance: many pieces share an ItemType, so key on Isn.
+                items["item:" + item.Isn] = UserItemDataToNet(item);
             }
         }
-        ret.AddRange(itemDictionary.Values);
+
+        ret.AddRange(items.Values);
         return ret;
     }
 
