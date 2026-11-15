@@ -43,7 +43,7 @@ public static class Logging
                 break;
         }
 
-        if (toConsole && LogLevel <= level)
+        if (toConsole && LogLevel < level)
             Console.WriteLine(msg);
 
         Console.ForegroundColor = originalFG;

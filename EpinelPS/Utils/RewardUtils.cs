@@ -28,7 +28,7 @@ public class RewardUtils
 
             if (newLevelExp == -1)
             {
-                Console.WriteLine("Unknown user level value for xp " + newXp);
+                Logging.WriteLine("Unknown user level value for xp " + newXp);
             }
 
             int newGems = 0;
@@ -106,7 +106,7 @@ public class RewardUtils
                         int newLevel = user.userPointData.UserLevel;
                         if (newLevelExp == -1)
                         {
-                            Console.WriteLine("Unknown user level value for xp " + newXp);
+                            Logging.WriteLine("Unknown user level value for xp " + newXp);
                         }
 
                         int newGems = 0;
@@ -270,7 +270,7 @@ public class RewardUtils
             else if (rewardType.ToString().StartsWith("Equipment"))
             {
 
-                Console.WriteLine($"[UseBundleBox] װ����Ʒ Id{rewardId} ��������װ����");
+                Logging.WriteLine($"[UseBundleBox] Adding equipment item {rewardId}");
 
                 int level = 0; // Default to 0
                 ItemSubType itemSubType = GameData.Instance.GetItemSubType(rewardId);
@@ -383,7 +383,7 @@ public class RewardUtils
             {
                 user.InfraCoreLvl = newLevel;
             }*/
-            Logging.WriteLine($"�������ľ��� {user.InfraCoreExp} ,�ȼ� {user.InfraCoreLvl}");
+            Logging.WriteLine($"InfraCore exp {user.InfraCoreExp}, level {user.InfraCoreLvl}");
             ret.InfraCoreExp = new NetIncreaseExpData()
             {
                 BeforeLv = beforeLv,
@@ -464,12 +464,12 @@ public class RewardUtils
                 {
                     if (spareItem != null)
                     {
-                        //Console.WriteLine($"[UseSelectBox] ������Ƭ: {newSpareItemCount}");
+                        // Logging.WriteLine($"[UseSelectBox] Adding {newSpareItemCount} spare pieces");
                         spareItem.Count += newSpareItemCount;
                     }
                     else
                     {
-                        //Console.WriteLine($"[UseSelectBox] �½���Ƭ: {newSpareItemCount}");
+                        // Logging.WriteLine($"[UseSelectBox] Creating {newSpareItemCount} spare pieces");
                         spareItem = new()
                         {
                             ItemType = character.PieceId,
@@ -507,11 +507,10 @@ public class RewardUtils
                 else
                 {
                     // If we cannot increase the item, we give body label instead
-                    //����޷�������Ŀ�����Ǹ�Ϊ�ṩ�����ǩ
 
                     int bodyLabel = GetValueByRarity(character.OriginalRare, 150, 200, 6000);
 
-                    Console.WriteLine($"Got: {bodyLabel} ��");
+                    Logging.WriteLine($"Got {bodyLabel} body labels");
 
                     totalBodyLabels += bodyLabel * dissoluteCharacterCount;
                     ret.Character.Add(GetNetCharacterData(ownedCharacter, bodyLabel));
@@ -521,7 +520,7 @@ public class RewardUtils
             }
             else
             {
-                //Console.WriteLine($"[UseSelectBox] ��ɫ�����ڣ����ӽ�ɫ��");
+                // Logging.WriteLine($"[UseSelectBox] Character not owned, adding a new one");
                 int csn = user.GenerateUniqueCharacterId();
                 ret.UserCharacters.Add(new NetUserCharacterDefaultData
                 {
@@ -580,7 +579,7 @@ public class RewardUtils
         }
         else if (rewardType == RewardType.Frame)
         {
-            Logging.WriteLine($"���ӱ߿�{rewardId}", LogType.Info);
+            Logging.WriteLine($"Adding profile frame {rewardId}", LogType.Info);
             UserFrameRecord? record = GameData.Instance.userFrameTable.Values.FirstOrDefault(x => x.Id == rewardId);
             if (record != null)
             {
@@ -597,7 +596,7 @@ public class RewardUtils
         }
         else if (rewardType == RewardType.CharacterCostume)
         {
-            Logging.WriteLine($"���ӷ�װ{rewardId}", LogType.Info);
+            Logging.WriteLine($"Adding character costume {rewardId}", LogType.Info);
             var record = GameData.Instance.CharacterCostumeTable.Values.FirstOrDefault(x => x.Id == rewardId);
             if (record != null)
             {
@@ -607,7 +606,7 @@ public class RewardUtils
         }
         else if (rewardType == RewardType.Album)
         {
-            Logging.WriteLine($"����ר��{rewardId}", LogType.Info);
+            Logging.WriteLine($"Adding jukebox album {rewardId}", LogType.Info);
 
             var record = GameData.Instance.jukeboxThemeDataRecords.Values.FirstOrDefault(x => x.Id == rewardId);
             if (record != null)
@@ -625,7 +624,7 @@ public class RewardUtils
         }
         else if (rewardType == RewardType.LiveWallpaper)
         {
-            Logging.WriteLine($"���ӱ�ֽ{rewardId}", LogType.Info);
+            Logging.WriteLine($"Adding live wallpaper {rewardId}", LogType.Info);
 
             var record = GameData.Instance.LiveWallpaperTable.Values.FirstOrDefault(x => x.Id == rewardId);
             if (record != null)
@@ -637,7 +636,7 @@ public class RewardUtils
         }
         else if (rewardType == RewardType.ProfileCardObject)
         {
-            Logging.WriteLine($"������ֽ{rewardId}", LogType.Info);
+            Logging.WriteLine($"Adding profile card object {rewardId}", LogType.Info);
 
             ProfileCardObjectRecord? CardObject = GameData.Instance.ProfileCardObjectTable.Where(x => x.Value.Id == rewardId)
             .FirstOrDefault().Value ?? throw new Exception("cannot find Card Object Id " + rewardId);

@@ -40,6 +40,65 @@ public static class AttractiveHelper
         return response;
     }
 
+    /// <summary>Grants the one-time reward for completing every counsel log of a character.</summary>
+    /// <param name="user">Player save data (bond entry, profile card objects).</param>
+    /// <param name="req">Request carrying the NameCode.</param>
+    /// <returns>ResObtainCounselProgressReward with the reward, or an empty response when not eligible.</returns>
+    public static ResObtainCounselProgressReward ObtainProgressReward(User user, ReqObtainCounselProgressReward req)
+    {
+        ResObtainCounselProgressReward response = new();
+
+        NetUserAttractiveData? bondInfo = user.BondInfo.FirstOrDefault(x => x.NameCode == req.NameCode);
+        if (bondInfo == null)
+        {
+            Logging.WriteLine($"No bond entry for counsel progress reward, NameCode={req.NameCode}", LogType.Warning);
+            return response;
+        }
+
+        // The client reads this flag from /character/attractive/get to stop offering the reward.
+        if (bondInfo.CompleteRewardStatus == CounselDialogCompleteRewardStatus.Received)
+        {
+            Logging.WriteLine($"Counsel progress reward already received, NameCode={req.NameCode}", LogType.Warning);
+            return response;
+        }
+
+        if (!GameData.Instance.AttractiveCounselCharacterTable.TryGetValue(req.NameCode, out var config))
+        {
+            Logging.WriteLine($"No counsel completion reward configured, NameCode={req.NameCode}", LogType.Warning);
+            return response;
+        }
+
+        // Skip characters with no counsel groups; an empty set must not count as complete.
+        List<int> requiredIds = [.. GameData.Instance.AttractiveCounselTable.Values
+            .Where(x => x.NameCode == req.NameCode)
+            .Select(x => x.Id)];
+        if (requiredIds.Count == 0)
+        {
+            Logging.WriteLine($"No counsel groups, NameCode={req.NameCode}", LogType.Warning);
+            return response;
+        }
+
+        if (requiredIds.Any(id => !bondInfo.CounselDialogCompleteIds.Contains(id)))
+        {
+            Logging.WriteLine($"Counsel logs incomplete, NameCode={req.NameCode}, {bondInfo.CounselDialogCompleteIds.Count}/{requiredIds.Count}", LogType.Warning);
+            return response;
+        }
+
+        RewardRecord? reward = GameData.Instance.GetRewardTableEntry(config.CollectRewardId);
+        if (reward == null)
+        {
+            Logging.WriteLine($"Reward table entry {config.CollectRewardId} not found, NameCode={req.NameCode}", LogType.Warning);
+            return response;
+        }
+
+        bondInfo.CompleteRewardStatus = CounselDialogCompleteRewardStatus.Received;
+        response.Reward = RewardUtils.RegisterRewardsForUser(user, reward);
+        JsonDb.Save();
+
+        Logging.WriteLine($"Counsel progress reward granted, NameCode={req.NameCode}, RewardId={config.CollectRewardId}", LogType.Info);
+        return response;
+    }
+
     /// <summary>Completes a counsel session and persists the bond-point gain.</summary>
     /// <param name="user">Player save data (BondInfo, daily count).</param>
     /// <param name="req">Request with NameCode, CounselTid and SelectTid.</param>
