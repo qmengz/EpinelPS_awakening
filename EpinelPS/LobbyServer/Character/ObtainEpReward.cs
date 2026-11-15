@@ -48,8 +48,9 @@ public class ObtainEpReward : LobbyMessage
         response.Reward = RewardUtils.RegisterRewardsForUser(user, reward);
         JsonDb.Save();
 
-        // 服装查询接口（/character/costume/get）本来就返回 CharacterCostumeTable 的全部 ID，
-        // 且 AttractiveLevelRewardTable 里 costume 字段全为 0，因此这里无需单独发放服装。
+        // /character/costume/get already returns every CharacterCostumeTable ID,
+        // and costume is always 0 in AttractiveLevelRewardTable, so no costume
+        // needs to be granted here.
         await WriteDataAsync(response);
     }
 }

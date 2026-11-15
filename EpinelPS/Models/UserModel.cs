@@ -669,6 +669,13 @@ public class User
             DispatchResetCount = 0;
             ResetableData.DispatchCount = GetDispatchCount() + infracore.FunctionList[1].Function;
             ResetableData.DailyCounselCount[1] = 3 + infracore.FunctionList[2].Function;
+
+            // Each character can be advised once per day; restore every flag on reset.
+            foreach (var bondInfo in BondInfo)
+            {
+                if (!bondInfo.CanCounselToday) bondInfo.CanCounselToday = true;
+            }
+
             GachaDailyFreePulls.Clear();
             DailyDiscountUsed = false;
 

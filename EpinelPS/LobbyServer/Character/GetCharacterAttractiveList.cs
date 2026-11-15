@@ -16,10 +16,12 @@ public class GetCharacterAttractiveList : LobbyMessage
             CounselAvailableCount = remainingCounselCount
         };
 
+        // CanCounselToday is maintained in the save data: reset to true daily and
+        // cleared when that character is advised. Do not overwrite it here with
+        // the global allowance, or the client's per-character daily limit breaks.
         foreach (NetUserAttractiveData item in user.BondInfo)
         {
             response.Attractives.Add(item);
-            item.CanCounselToday = remainingCounselCount > 0;
         }
 
         // TODO: Validate response from real server and pull info from user info
