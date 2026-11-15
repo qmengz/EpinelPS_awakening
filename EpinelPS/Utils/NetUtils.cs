@@ -103,7 +103,7 @@ public class NetUtils
                 itemDictionary[item.ItemType] = UserItemDataToNet(item);
             }
         }
-
+        ret.AddRange(itemDictionary.Values);
         return ret;
     }
 

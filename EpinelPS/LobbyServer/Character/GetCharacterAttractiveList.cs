@@ -5,19 +5,21 @@ public class GetCharacterAttractiveList : LobbyMessage
 {
     protected override async Task HandleAsync()
     {
-        ReqGetAttractiveList req = await ReadData<ReqGetAttractiveList>();
+        _ = await ReadData<ReqGetAttractiveList>();
         User user = GetUser();
+
+        user.ResetDataIfNeeded();
+        int remainingCounselCount = user.ResetableData.DailyCounselCount.GetValueOrDefault(1, 3);
 
         ResGetAttractiveList response = new()
         {
-            CounselAvailableCount = user.ResetableData.DailyCounselCount.GetValueOrDefault(1, 3)
+            CounselAvailableCount = remainingCounselCount
         };
 
         foreach (NetUserAttractiveData item in user.BondInfo)
         {
             response.Attractives.Add(item);
-            item.CanCounselToday = true;
-
+            item.CanCounselToday = remainingCounselCount > 0;
         }
 
         // TODO: Validate response from real server and pull info from user info

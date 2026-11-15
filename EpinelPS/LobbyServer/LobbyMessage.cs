@@ -1,8 +1,6 @@
 ﻿using EpinelPS.Database;
 using EpinelPS.Utils;
 using Google.Protobuf;
-using Paseto;
-using Paseto.Builder;
 
 namespace EpinelPS.LobbyServer;
 

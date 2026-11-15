@@ -162,7 +162,7 @@ public static class LobbyHandler
             });
         }
 
-        ret.CounselCount = user.ResetableData.DailyCounselCount[1];
+        ret.CounselCount = user.ResetableData.DailyCounselCount.GetValueOrDefault(1, 3);
         ret.OutpostFastBattleCount = user.ResetableData.WipeoutCount;        
         return ret;
     }

@@ -7,10 +7,6 @@ public class CheckCounsel : LobbyMessage
     {
         ReqCounseledBefore req = await ReadData<ReqCounseledBefore>();
 
-        ResCounseledBefore response = new();
-
-        response.IsCounseledBefore = false;
-
-        await WriteDataAsync(response);
+        await WriteDataAsync(AttractiveHelper.BuildCounseledBeforeResponse(GetUser(), req));
     }
 }

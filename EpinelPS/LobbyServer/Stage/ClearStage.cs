@@ -14,7 +14,7 @@ public class ClearStage : LobbyMessage
         ResClearStage response = new();
         User user = GetUser();
 
-        Console.WriteLine($"Stage " + req.StageId + " completed, result is " + req.BattleResult);
+        Logging.WriteLine($"Stage " + req.StageId + " completed, result is " + req.BattleResult, LogType.Info);
 
         // TODO: check if user has already cleared this stage
         if (req.BattleResult == 1)

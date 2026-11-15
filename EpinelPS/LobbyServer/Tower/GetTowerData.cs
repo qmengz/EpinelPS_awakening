@@ -48,7 +48,6 @@ public class GetTowerData : LobbyMessage
         {
             towerData.FirstOrDefault(x => x.Type == ((int)towerProgress.Key))?.Floor = towerProgress.Value;
         }
-        System.Console.WriteLine(JsonSerializer.Serialize(towerData));
         response.Data.AddRange(towerData);
 
         await WriteDataAsync(response);

@@ -245,11 +245,20 @@ public class GameData
     [LoadRecord("AttractiveCounselCharacterTable.json", "NameCode")]
     public readonly Dictionary<int, AttractiveCounselCharacterRecord_Raw> AttractiveCounselCharacterTable = [];
 
+    [LoadRecord("AttractiveCounselTable.json", "Id")]
+    public readonly Dictionary<int, AttractiveCounselRecord> AttractiveCounselTable = [];
+
     [LoadRecord("AttractiveLevelRewardTable.json", "Id")]
     public readonly Dictionary<int, AttractiveLevelRewardRecord> AttractiveLevelReward = [];
 
     [LoadRecord("AttractiveLevelTable.json", "Id")]
     public readonly Dictionary<int, AttractiveLevelRecord> AttractiveLevelTable = [];
+
+    public readonly Dictionary<string, AttractiveCounselDialogRecord> CounselDialogs = [];
+    public readonly Dictionary<string, List<AttractiveCounselDialogRecord>> CounselDialogGroups = [];
+
+    [LoadRecord("SquadInfoTable.json", "Id")]
+    public readonly Dictionary<int, SquadInfoRecord> SquadInfoTable = [];
 
     [LoadRecord("SubQuestTable.json", "Id")]
     public readonly Dictionary<int, SubQuestRecord> Subquests = [];
@@ -912,6 +921,48 @@ public class GameData
                 {
                     MapData.Add(map.Id, map);
                 }
+            }
+        }
+
+        int counselDialogFiles = 0;
+        IProgress<double> silentProgress = new Progress<double>();
+        foreach (ZipEntry item in MainZip)
+        {
+            if (!item.Name.Contains("AttractiveCounselDialogTable", StringComparison.OrdinalIgnoreCase)) continue;
+            if (!item.Name.EndsWith(".mpk", StringComparison.OrdinalIgnoreCase)) continue;
+
+            AttractiveCounselDialogRecord[] rows = await LoadZip<AttractiveCounselDialogRecord>(item.Name, silentProgress);
+            foreach (AttractiveCounselDialogRecord row in rows)
+            {
+                if (row.Id is not null)
+                {
+                    CounselDialogs[row.Id] = row;
+                }
+
+                if (row.GroupId is not null)
+                {
+                    if (!CounselDialogGroups.TryGetValue(row.GroupId, out List<AttractiveCounselDialogRecord>? group))
+                    {
+                        group = [];
+                        CounselDialogGroups[row.GroupId] = group;
+                    }
+                    group.Add(row);
+                }
+            }
+            counselDialogFiles++;
+        }
+
+        Logging.WriteLine($"Loaded {counselDialogFiles} attractive counsel dialog tables, {CounselDialogs.Count} dialogs in {CounselDialogGroups.Count} groups");
+
+        if (counselDialogFiles == 0)
+        {
+            Logging.WriteLine("No attractive counsel dialog table found in static data; candidate entries:", LogType.Error);
+            int shown = 0;
+            foreach (ZipEntry item in MainZip)
+            {
+                if (!item.Name.Contains("Counsel", StringComparison.OrdinalIgnoreCase)) continue;
+                Logging.WriteLine("  " + item.Name, LogType.Error);
+                if (++shown >= 20) break;
             }
         }
 
