@@ -1,6 +1,5 @@
 using EpinelPS.Data;
 using EpinelPS.Database;
-using EpinelPS.Models;
 using EpinelPS.Utils;
 
 namespace EpinelPS.LobbyServer.Episode;
@@ -182,6 +181,6 @@ public static class EpisodeHelper
             .Select(x => x.ScenarioGroupId!)];
 
         // Missions without scenario groups cannot be completed.
-        return required.Count > 0 && required.All(id => progress.CompletedScenarioGroupIds.Contains(id));
+        return required.Count > 0 && required.All(progress.CompletedScenarioGroupIds.Contains);
     }
 }
