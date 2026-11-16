@@ -695,6 +695,12 @@ public class GameData
     [LoadRecord("WaveDataTable.wave_Intercept_001.json", "StageId")]
     public readonly Dictionary<int, WaveDataRecord> WaveIntercept001Table = [];
 
+    // Ep Mission
+    [LoadRecord("NikkeEpMissionTable.json", "Id")]
+    public readonly Dictionary<int, NikkeEpMissionRecord> NikkeEpMissionTable = [];
+    [LoadRecord("NikkeEpMissionScenarioGroupTable.json", "Id")]
+    public readonly Dictionary<int, NikkeEpMissionScenarioGroupRecord> NikkeEpMissionScenarioGroupTable = [];
+
 
     //Field
     [LoadRecord("FieldPasswordTable.json", "Id")]

@@ -5,12 +5,8 @@ public class ListMission : LobbyMessage
 {
     protected override async Task HandleAsync()
     {
-        ReqListValidEpMission req = await ReadData<ReqListValidEpMission>();
+        _ = await ReadData<ReqListValidEpMission>();
 
-        ResListValidEpMission response = new();
-
-        // TOOD
-
-        await WriteDataAsync(response);
+        await WriteDataAsync(EpisodeHelper.BuildValidMissionResponse());
     }
 }

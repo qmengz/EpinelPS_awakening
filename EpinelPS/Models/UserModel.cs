@@ -9,6 +9,11 @@ public class ClearedTutorialData
     public int Id { get; set; }
     public int VersionGroup;
 }
+public class EpMissionProgress
+{
+    public List<string> CompletedScenarioGroupIds { get; set; } = [];
+    public bool RewardReceived { get; set; } = false;
+}
 public class User
 {
     // User info
@@ -44,6 +49,7 @@ public class User
 
     // Game data
     public List<string> CompletedScenarios { get; set; } = [];
+    public Dictionary<int, EpMissionProgress> EpMissions { get; set; } = [];
     public Dictionary<string, FieldInfo> FieldInfo { get; set; } = []; // here for backwards compatibility
 
     public Dictionary<string, FieldInfoNew> FieldInfoNew { get; set; } = [];
